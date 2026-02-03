@@ -21,7 +21,7 @@ async def get_messages():
     async with async_session() as session:
         res = await session.execute(select(Message))
 
-        messages = await res.scalars().all()
+        messages = res.scalars().all()
 
         return messages
 

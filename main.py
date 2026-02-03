@@ -13,7 +13,11 @@ import sys
 from dotenv import load_dotenv
 
 from db.database import create_db
+from handlers.groups import check_pay
 from handlers.personal_bot import router as bot_router
+from handlers.groups import router as groups_router
+from utils.scheduler_ads import push_ad
+from utils.sheduler_for_delete_messages import check_messages
 
 load_dotenv()
 
@@ -35,14 +39,20 @@ async def main():
     await bot.delete_webhook(drop_pending_updates=True)
 
     dp.include_router(bot_router)
+    dp.include_router(groups_router)
     # await create_db()
 
-    scheduler.add_job(...)
+    scheduler.add_job(check_messages, 'interval', seconds=10, args=[bot])
+    scheduler.add_job(push_ad, 'interval', hours=1, args=[bot])
+
+    scheduler.start()
 
     try:
         await dp.start_polling(bot)
     finally:
         await bot.session.close()
+        if scheduler.running:
+            scheduler.shutdown()
 
         await asyncio.sleep(0.1)
 

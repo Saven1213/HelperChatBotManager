@@ -1,4 +1,4 @@
-from aiofiles.os import access
+
 from sqlalchemy import select
 from db.models import User
 
@@ -18,7 +18,6 @@ async def add_user(tg_id: int, username: str):
         user = User(
             tg_id=tg_id,
             username=username,
-            access=False,
             ads_limit=0
         )
 

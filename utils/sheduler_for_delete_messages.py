@@ -24,8 +24,8 @@ async def check_messages(bot: Bot):
                     )
 
                     await mark_as_deleted(message.id)
-                    print(f"✅ Удалено сообщение {message.id}")
+
                 except Exception as e:
-                    print(f"❌ Не удалось удалить {message.id}: {e}")
+
 
                     await mark_as_deleted(message.id)

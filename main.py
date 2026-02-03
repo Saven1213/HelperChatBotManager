@@ -1,7 +1,9 @@
 import asyncio
 import logging
+from datetime import datetime
 
 from aiogram.client.default import DefaultBotProperties
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 
 from aiogram import Bot, Dispatcher
@@ -17,8 +19,7 @@ load_dotenv()
 
 TOKEN = str(os.getenv("BOT_TOKEN"))
 
-
-
+scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
 
 
 
@@ -35,6 +36,8 @@ async def main():
 
     dp.include_router(bot_router)
     # await create_db()
+
+    scheduler.add_job(...)
 
     try:
         await dp.start_polling(bot)

@@ -5,7 +5,7 @@ from db.models import Base
 
 engine = create_async_engine(
     url=settings.db_url_asyncpg(),
-    echo=True,
+    echo=False,
 
 )
 

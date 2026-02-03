@@ -1,6 +1,7 @@
+from datetime import datetime
 from typing import Optional, Union
 
-from sqlalchemy import String, Integer, Boolean, Float, DateTime
+from sqlalchemy import String, Integer, Boolean, Float, DateTime, BigInteger
 from sqlalchemy.orm import DeclarativeBase,Mapped, mapped_column
 
 
@@ -17,8 +18,6 @@ class User(Base):
 
     username: Mapped[str] = mapped_column(String, nullable=True)
 
-    access: Mapped[bool] = mapped_column(Boolean, default=False)
-
     ads_limit: Mapped[int] = mapped_column(Integer)
 
 class Group(Base):
@@ -28,11 +27,27 @@ class Group(Base):
 
     district: Mapped[str] = mapped_column(String)
 
-    group_id: Mapped[int] = mapped_column(Integer)
+    group_id: Mapped[int] = mapped_column(BigInteger)
 
     name: Mapped[str] = mapped_column(String)
 
     url: Mapped[str] = mapped_column(String)
+
+class Message(Base):
+    __tablename__ = 'messages'
+
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+    message_id: Mapped[int] = mapped_column(Integer)
+
+    type: Mapped[str] = mapped_column(String)
+
+    chat_id: Mapped[int] = mapped_column(BigInteger)
+
+    time: Mapped[datetime] = mapped_column(DateTime)
+
+    status: Mapped[str] = mapped_column(String)
 
 
 

@@ -3,6 +3,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 from db.crud.user import get_user, add_user
+from handlers.config import tg_id_list
 
 router = Router()
 
@@ -16,6 +17,19 @@ async def start(message: Message):
 
     if not user:
         await add_user(tg_id, username)
+
+    if tg_id in tg_id_list:
+
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text='Посмотреть список всех групп')
+                ]
+            ]
+        )
+
+        await message.answer('Добро пожаловать в админ панель хелпера!', reply_markup=)
+        return
 
     text = ('👋 <b>Добро пожаловать в бот-доступа чатов Москвы и Подмосковья</b>\n\n'
             'В наших чатах Вы можете опубликовать своё объявление и найти покупателей на ваши товары или услуги.\n\n'

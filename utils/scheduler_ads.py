@@ -31,10 +31,10 @@ async def push_ad(bot: Bot):
 
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
-            [InlineKeyboardButton(text="🔑 Доступ", url="https://t.me/Lavanda_helpbotbot"),
-            InlineKeyboardButton(text="💬 Сеть чатов", callback_data="chat_network_info")],
+            [InlineKeyboardButton(text="🔑 Доступ", url="https://t.me/Lavanda_helpbot"),
+            InlineKeyboardButton(text="📍 Сеть чатов", url='https://t.me/addlist/8fGeGpWoxMVkNWIy')],
             [InlineKeyboardButton(text="📢 Реклама", url="https://t.me/Lavanda_ads_bot"),
-            InlineKeyboardButton(text="❓ FAQ", url="https://t.me/")]
+            InlineKeyboardButton(text="❓ FAQ", url="https://telegra.ph/FAQ-CHasto-zadavaemye-voprosy-02-04-2")]
         ]
     )
 

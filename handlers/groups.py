@@ -6,7 +6,8 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 import asyncio
 from db.crud.groups import get_groups
 from db.crud.message import add_message
-from db.crud.user import get_user, add_user
+from db.crud.user import get_user, add_user, reduce_ad
+from handlers.config import tg_id_list
 
 router = Router()
 
@@ -17,22 +18,27 @@ async def check_pay(message: Message, bot: Bot):
 
     group_ids = [group.group_id for group in available_groups]
 
-    print(group_ids)
-
     chat_id = message.chat.id
 
-    print(chat_id)
+    tg_id = message.from_user.id
 
-    print(message.text)
+    if tg_id in tg_id_list and not message.text.startswith('/'):
+        return
+    else:
+        if tg_id in tg_id_list:
+            await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
 
     if chat_id in group_ids:
-        tg_id = message.from_user.id
+
 
         user = await get_user(tg_id)
 
         if user:
             if user.ads_limit >= 1:
-                return
+
+                await reduce_ad(tg_id)
+
             else:
 
 

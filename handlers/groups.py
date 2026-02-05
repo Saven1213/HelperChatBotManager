@@ -16,20 +16,39 @@ async def check_pay(message: Message, bot: Bot):
 
     available_groups = await get_groups()
 
-    group_ids = [group.group_id for group in available_groups]
+    # group_ids = [group.group_id for group in available_groups]
 
     chat_id = message.chat.id
 
     tg_id = message.from_user.id
 
-    if tg_id in tg_id_list and not message.text.startswith('/'):
-        return
-    else:
-        if tg_id in tg_id_list:
-            await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+    try:
+
+        if tg_id in tg_id_list and not message.text.startswith('/'):
+            print('ту')
+            return
+
+        else:
+            if tg_id in tg_id_list:
+                print('ТУТ')
+                await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+        if 'реклама' in message.text or 'erid' in message.text:
+            await bot.delete_message(chat_id, message.message_id)
+            print(message.text)
+            print('тутт')
+            return
 
 
-    if chat_id in group_ids:
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    InlineKeyboardButton(text='✅ Получить доступ', url='https://t.me/Lavanda_helpbot?start')
+                ]
+            ]
+        )
+
+        # if chat_id in group_ids:
 
 
         user = await get_user(tg_id)
@@ -45,7 +64,7 @@ async def check_pay(message: Message, bot: Bot):
 
                 msg_id = message.message_id
                 await bot.delete_message(chat_id=chat_id, message_id=msg_id)
-                bot_msg_id = await message.answer(text=f'{message.from_user.first_name}, пока вы не можете отправлять сообщения в этом чате. Перейдите в @Lavanda_helpbot и получите доступ к чату.')
+                bot_msg_id = await message.answer(text=f'{message.from_user.first_name}, пока вы не можете отправлять сообщения в этом чате. Перейдите в @Lavanda_helpbot и получите доступ к чату.', reply_markup=keyboard)
 
                 await add_message(bot_msg_id.message_id, 'user_block', datetime.utcnow(), chat_id)
 
@@ -55,10 +74,10 @@ async def check_pay(message: Message, bot: Bot):
             msg_id = message.message_id
             await bot.delete_message(chat_id=chat_id, message_id=msg_id)
             bot_msg_id = await message.answer(
-                text=f'{message.from_user.first_name}, пока вы не можете отправлять сообщения в этом чате. Перейдите в @Lavanda_helpbot и получите доступ к чату.')
+                text=f'{message.from_user.first_name}, пока вы не можете отправлять сообщения в этом чате. Перейдите в @Lavanda_helpbot и получите доступ к чату.', reply_markup=keyboard)
 
             await add_message(bot_msg_id.message_id, 'user_block', datetime.utcnow(), chat_id)
 
             await add_user(tg_id, message.from_user.username)
-
-
+    except:
+        pass

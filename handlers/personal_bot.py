@@ -47,7 +47,7 @@ async def start(message: Message):
             'Допустимое кол-во символов не более 1000.\n\n'
             '❗️<b>Вы можете размещать объявления в любых чатах нашей сети!</b>\n'
             'Добавьте папку с чатами и публикуйте объявления во всех чатах по единому тарифу '
-            '<a href="https://t.me/addlist/UHtNsWRvduxhNjNi">https://t.me/addlist/UHtNsWRvduxhNjNi</a>')
+            '<a href="https://t.me/addlist/8fGeGpWoxMVkNWIy">https://t.me/addlist/8fGeGpWoxMVkNWIy</a>')
 
     await message.answer(text=text)
 
@@ -73,8 +73,8 @@ async def start(message: Message):
             '<b>Тариф «Максимальный»</b> ⤵️\n'
             '999 объявлений за 5\'000р.\n\n'
             '⚠️ Тарифы действуют на всю сеть чатов, то есть, купив тариф, вы сможете размещать объявления в любом из 54 чатов сети 👉 '
-            '<a href="https://t.me/addlist/UHtNsWRvduxhNjNi">https://t.me/addlist/UHtNsWRvduxhNjNi</a>\n\n'
-            '🔥 Реклама с закрепом ➡️ @ads_moscow_bot')
+            'https://t.me/addlist/8fGeGpWoxMVkNWIy\n\n'
+            '🔥 Реклама с закрепом ➡️ @Lavanda_ads_bot')
 
 
 
@@ -116,7 +116,7 @@ async def main(callback: CallbackQuery, state: FSMContext):
             'Допустимое кол-во символов не более 1000.\n\n'
             '❗️<b>Вы можете размещать объявления в любых чатах нашей сети!</b>\n'
             'Добавьте папку с чатами и публикуйте объявления во всех чатах по единому тарифу '
-            '<a href="https://t.me/addlist/UHtNsWRvduxhNjNi">https://t.me/addlist/UHtNsWRvduxhNjNi</a>')
+            'https://t.me/addlist/8fGeGpWoxMVkNWIy')
 
     await callback.message.answer(text=text)
 
@@ -141,8 +141,8 @@ async def main(callback: CallbackQuery, state: FSMContext):
              '<b>Тариф «Максимальный»</b> ⤵️\n'
              '999 объявлений за 5\'000р.\n\n'
              '⚠️ Тарифы действуют на всю сеть чатов, то есть, купив тариф, вы сможете размещать объявления в любом из 54 чатов сети 👉 '
-             '<a href="https://t.me/addlist/UHtNsWRvduxhNjNi">https://t.me/addlist/UHtNsWRvduxhNjNi</a>\n\n'
-             '🔥 Реклама с закрепом ➡️ @ads_moscow_bot')
+             'https://t.me/addlist/8fGeGpWoxMVkNWIy\n\n'
+             '🔥 Реклама с закрепом ➡️ @Lavanda_ads_bot')
 
     await callback.message.answer(text2, reply_markup=keyboard)
 
@@ -422,3 +422,44 @@ async def delete_group_handler(callback: CallbackQuery):
         )
 
     await callback.answer()
+
+@router.callback_query(F.data.split('-')[0] == 'price')
+async def price_handle(callback: CallbackQuery):
+    price = int(callback.data.split('-')[1])
+
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text=f'💳 Оплатить {price} Р', url='https://t.me/maks_manshilin')
+            ],
+            [
+                InlineKeyboardButton(text='🏠 Главное меню', callback_data='main')
+            ]
+        ]
+    )
+
+    text = (
+        '10 объявлений за 200р.\n'
+        'Цена: 200 руб\n'
+        'Кол-во доступных сообщений: 10\n\n'
+
+        '✅ '
+        'Опубликуйте 10 объявлений в <a href="https://t.me/addlist/8fGeGpWoxMVkNWIy">26-ти чатах нашей сети</a>\n\n'
+
+        '📝 Требования к сообщениям в чатах:\n'
+        '✓ Количество символов до 1000\n'
+        '✓ Без указания внешних ссылок\n'
+        '✓ Запрещены репосты и кнопки\n\n'
+        '💬 Остались вопросы? Пишите\n'
+        '👉 @maks_manshilin\n\n'
+
+        '🔥 Вы можете размешать объявления во всех <a href="https://t.me/addlist/8fGeGpWoxMVkNWIy">26-ти чатах нашей сети</a>\n\n'
+        
+
+        '⬇️ Для оплаты тарифа нажмите кнопку ниже'
+    )
+
+    await callback.message.edit_text(text=text, reply_markup=keyboard)
+
+
+

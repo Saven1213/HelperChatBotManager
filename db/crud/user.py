@@ -37,3 +37,17 @@ async def reduce_ad(tg_id):
 
             session.add(user)
             await session.commit()
+
+async def add_ad(tg_id: int, ads: int):
+    async with async_session() as session:
+
+        res = await session.execute(select(User).where(User.tg_id == tg_id))
+
+        user = res.scalar_one_or_none()
+
+        user.ads_limit += ads
+
+
+
+        await session.commit()
+

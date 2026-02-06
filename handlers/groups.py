@@ -25,18 +25,17 @@ async def check_pay(message: Message, bot: Bot):
     try:
 
         if tg_id in tg_id_list and not message.text.startswith('/'):
-            print('ту')
+
             return
 
         else:
             if tg_id in tg_id_list:
-                print('ТУТ')
+
                 await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
         if 'реклама' in message.text or 'erid' in message.text:
             await bot.delete_message(chat_id, message.message_id)
-            print(message.text)
-            print('тутт')
+
             return
 
 

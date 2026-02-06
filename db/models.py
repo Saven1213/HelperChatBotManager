@@ -49,6 +49,32 @@ class Message(Base):
 
     status: Mapped[str] = mapped_column(String)
 
+class Payment(Base):
+    __tablename__ = 'payments'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+    payment_id: Mapped[str] = mapped_column(String)
+
+    tg_id: Mapped[int] = mapped_column(BigInteger)
+
+    payload: Mapped[str] = mapped_column(String)
+
+    currency: Mapped[str] = mapped_column(String)
+
+    amount: Mapped[int] = mapped_column(Integer)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

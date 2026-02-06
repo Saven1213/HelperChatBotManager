@@ -1,17 +1,30 @@
-from aiogram import F, Router
+import os
+from cProfile import label
+
+from aiogram import F, Router, Bot
+from aiogram.enums import ContentType
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, LabeledPrice, \
+    PreCheckoutQuery
+from dotenv import load_dotenv
 from sqlalchemy import select
 from aiogram.fsm.state import State, StatesGroup
 
 from db.crud.groups import get_groups, add_group, get_group_by_id, delete_group
-from db.crud.user import get_user, add_user
+from db.crud.payment import add_payment
+from db.crud.user import get_user, add_user, add_ad
 from db.database import async_session
 from db.models import Group
 from handlers.config import tg_id_list
 
 router = Router()
+
+load_dotenv()
+
+YOOTOKEN = os.getenv("YOOTOKEN")
+
+
 
 @router.message(CommandStart())
 async def start(message: Message):
@@ -39,7 +52,7 @@ async def start(message: Message):
 
     text = ('👋 <b>Добро пожаловать в бот-доступа чатов Москвы и Подмосковья</b>\n\n'
             'В наших чатах Вы можете опубликовать своё объявление и найти покупателей на ваши товары или услуги.\n\n'
-            'Размещая у нас объявление, Вы автоматически соглашаетесь с <a href="https://telegra.ph/Polzovatelskoe-soglashenie-ob-usloviyah-ispolzovaniya-Klassifajd-chatov-05-20">Договором-офертой</a>. '
+            'Размещая у нас объявление, Вы автоматически соглашаетесь с <a href="https://telegra.ph/Oferta-na-okazanie-uslug-po-razmeshcheniyu-reklamy-v-Klassifajd-chatah-02-03">Договором-офертой</a>. '
             'Если Вы не согласны с офертой, то пожалуйста покиньте чат.\n\n'
             'Наши чаты работают по принципу площадок Классифайд - досок объявлений, как Avito, Cian и т.д. '
             'Для обычных объявлений маркировка не требуется (разъяснение ФАС №АК-83509-19 от 25.09.2019, п.2.2.). '
@@ -430,7 +443,7 @@ async def price_handle(callback: CallbackQuery):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text=f'💳 Оплатить {price} Р', url='https://t.me/maks_manshilin')
+                InlineKeyboardButton(text=f'💳 Оплатить {price} Р', callback_data=f'process_payment-{price}')
             ],
             [
                 InlineKeyboardButton(text='🏠 Главное меню', callback_data='main')
@@ -460,6 +473,62 @@ async def price_handle(callback: CallbackQuery):
     )
 
     await callback.message.edit_text(text=text, reply_markup=keyboard)
+@router.callback_query(F.data.split("-")[0] == 'process_payment')
+async def process_payment(callback: CallbackQuery, bot: Bot):
+    await callback.message.delete()
+
+    price = callback.data.split('-')[1]
+
+    tg_id = callback.from_user.id
+    await bot.send_invoice(
+        chat_id=tg_id,
+        title='Оплата доступа',
+        description='Оплата за доступ к размещению объявлений',
+        payload='pay_ads',
+        provider_token=str(YOOTOKEN),
+        currency="RUB",
+        start_parameter='pay_ads',
+        prices=[
+            LabeledPrice(label='К оплате', amount=int(price) * 100)
+        ]
+    )
+
+@router.pre_checkout_query()
+async def process_the_checkout_query(checkout: PreCheckoutQuery, bot: Bot):
+    await bot.answer_pre_checkout_query(checkout.id, ok=True)
+
+@router.message(F.successful_payment)
+async def if_success(message: Message):
+    payment = message.successful_payment
+    tg_id = message.from_user.id
+    if payment.invoice_payload == "pay_ads":
+
+
+        amount = payment.total_amount // 100
+        ads = 0
+
+        if amount == 200:
+            ads += 10
+        elif amount == 1000:
+            ads += 100
+        elif amount == 5000:
+            ads += 999
+
+
+        await add_ad(tg_id, ads)
+
+        payment_id = payment.provider_payment_charge_id
+        payment_currency = payment.currency
+        payment_payload = payment.invoice_payload
+
+        await add_payment(tg_id, payment_id, payment_payload, payment_currency, amount)
+
+
+        await message.answer(
+            f"✅ Оплата прошла успешно\n"
+            f"📦 Начислено объявлений: {ads}"
+        )
+
 
 
 

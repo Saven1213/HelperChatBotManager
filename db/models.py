@@ -65,6 +65,14 @@ class Payment(Base):
     amount: Mapped[int] = mapped_column(Integer)
 
 
+class StopWord(Base):
+    __tablename__ = 'stopwords'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+
+    word: Mapped[str] = mapped_column(String)
+
+
 
 
 

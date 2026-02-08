@@ -6,6 +6,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 import asyncio
 from db.crud.groups import get_groups
 from db.crud.message import add_message
+from db.crud.stopwords import get_stop_words
 from db.crud.user import get_user, add_user, reduce_ad
 from handlers.config import tg_id_list
 
@@ -33,10 +34,14 @@ async def check_pay(message: Message, bot: Bot):
 
                 await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
-        if 'реклама' in message.text or 'erid' in message.text:
-            await bot.delete_message(chat_id, message.message_id)
+        stopwords = await get_stop_words()
 
-            return
+        for stopword in stopwords:
+
+            if stopword.word in message.text:
+                await bot.delete_message(chat_id, message.message_id)
+
+                return
 
 
         keyboard = InlineKeyboardMarkup(

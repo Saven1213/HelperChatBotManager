@@ -13,6 +13,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from db.crud.groups import get_groups, add_group, get_group_by_id, delete_group
 from db.crud.payment import add_payment
+from db.crud.stopwords import add_stop_words
 from db.crud.user import get_user, add_user, add_ad
 from db.database import async_session
 from db.models import Group
@@ -43,6 +44,9 @@ async def start(message: Message):
             inline_keyboard=[
                 [
                     InlineKeyboardButton(text='Посмотреть список всех групп', callback_data='groups_list')
+                ],
+                [
+                    InlineKeyboardButton(text='Добавить стоп слова', callback_data='add_stopwords')
                 ]
             ]
         )
@@ -119,9 +123,9 @@ async def main(callback: CallbackQuery, state: FSMContext):
         await callback.message.answer('Добро пожаловать в админ панель хелпера!', reply_markup=keyboard)
         return
 
-    text = ('👋 <b>Добро пожаловать в бот-доступа чатов Москвы и Подмосковья</b>\n\n'
+    text = ('👋 <b>Добро пожаловать в бот-доступа</b>\n\n'
             'В наших чатах Вы можете опубликовать своё объявление и найти покупателей на ваши товары или услуги.\n\n'
-            'Размещая у нас объявление, Вы автоматически соглашаетесь с <a href="https://telegra.ph/Polzovatelskoe-soglashenie-ob-usloviyah-ispolzovaniya-Klassifajd-chatov-05-20">Договором-офертой</a>. '
+            'Размещая у нас объявление, Вы автоматически соглашаетесь с <a href="https://telegra.ph/Oferta-na-okazanie-uslug-po-razmeshcheniyu-reklamy-v-Klassifajd-chatah-02-03">Договором-офертой</a>. '
             'Если Вы не согласны с офертой, то пожалуйста покиньте чат.\n\n'
             'Наши чаты работают по принципу площадок Классифайд - досок объявлений, как Avito, Cian и т.д. '
             'Для обычных объявлений маркировка не требуется (разъяснение ФАС №АК-83509-19 от 25.09.2019, п.2.2.). '
@@ -129,7 +133,7 @@ async def main(callback: CallbackQuery, state: FSMContext):
             'Допустимое кол-во символов не более 1000.\n\n'
             '❗️<b>Вы можете размещать объявления в любых чатах нашей сети!</b>\n'
             'Добавьте папку с чатами и публикуйте объявления во всех чатах по единому тарифу '
-            'https://t.me/addlist/8fGeGpWoxMVkNWIy')
+            '')
 
     await callback.message.answer(text=text)
 
@@ -158,6 +162,29 @@ async def main(callback: CallbackQuery, state: FSMContext):
              '🔥 Реклама с закрепом ➡️ @Lavanda_ads_bot')
 
     await callback.message.answer(text2, reply_markup=keyboard)
+
+class StopWords(StatesGroup):
+    stopwords = State()
+
+@router.callback_query(F.data == 'add_stopwords')
+async def add_stopwords(callback: CallbackQuery, state: FSMContext):
+    await state.set_state(StopWords.stopwords)
+
+    await callback.message.edit_text('Введите стоп слова:\n Если слов несколько - через запятую без пробела. Пример: бан,реклама\n\nЛибо одно слово')
+
+@router.message(StopWords.stopwords)
+async def stopwords_state(message: Message, state: FSMContext):
+    text = message.text
+
+    await state.clear()
+
+    words = [word.strip() for word in text.split(',') if word.strip()]
+
+    await add_stop_words(words)
+
+    await message.answer('Отлично стоп слова добавлены!')
+
+
 
 
 @router.callback_query(F.data.startswith('groups_list'))
@@ -523,10 +550,11 @@ async def if_success(message: Message):
 
         await add_payment(tg_id, payment_id, payment_payload, payment_currency, amount)
 
-
         await message.answer(
             f"✅ Оплата прошла успешно\n"
-            f"📦 Начислено объявлений: {ads}"
+            f"📦 Начислено объявлений: {ads}\n\n"
+            f"Теперь вы можете размещать объявления во "
+            f"<a href='https://t.me/addlist/8fGeGpWoxMVkNWIy'>всей сети наших групп</a> 🚀"
         )
 
 

@@ -25,6 +25,15 @@ async def check_pay(message: Message, bot: Bot):
 
     try:
 
+        stopwords = await get_stop_words()
+
+        for stopword in stopwords:
+
+            if stopword.word in message.text:
+                await bot.delete_message(chat_id, message.message_id)
+
+                return
+
         if tg_id in tg_id_list and not message.text.startswith('/'):
 
             return
@@ -34,14 +43,7 @@ async def check_pay(message: Message, bot: Bot):
 
                 await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
-        stopwords = await get_stop_words()
 
-        for stopword in stopwords:
-
-            if stopword.word in message.text:
-                await bot.delete_message(chat_id, message.message_id)
-
-                return
 
 
         keyboard = InlineKeyboardMarkup(

@@ -2,7 +2,7 @@ import os
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile
 
 from db.crud.groups import get_groups
 from db.crud.message import get_messages
@@ -49,9 +49,10 @@ async def push_ad(bot: Bot):
 
 
     for group in groups:
+
         await bot.send_photo(
             chat_id=group.group_id,
-            photo=photo_path,
+            photo=InputFile(photo_path),
             caption=text,
             reply_markup=keyboard
         )

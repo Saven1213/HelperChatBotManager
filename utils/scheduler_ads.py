@@ -2,7 +2,7 @@ import os
 
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile, FSInputFile
 
 from db.crud.groups import get_groups
 from db.crud.message import get_messages
@@ -46,13 +46,13 @@ async def push_ad(bot: Bot):
     photos_dir = os.path.join(parent_dir, 'pictures')
     photo_path = os.path.join(photos_dir, 'main_info.jpg')
 
-
+    photo = FSInputFile(photo_path)
 
     for group in groups:
 
         await bot.send_photo(
             chat_id=group.group_id,
-            photo=InputFile(photo_path),
+            photo=photo,
             caption=text,
             reply_markup=keyboard
         )

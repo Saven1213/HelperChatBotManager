@@ -43,7 +43,7 @@ async def main():
     # await create_db()
 
     scheduler.add_job(check_messages, 'interval', seconds=10, args=[bot])
-    scheduler.add_job(push_ad, 'interval', seconds=30, args=[bot])
+    scheduler.add_job(push_ad, 'interval', hours=1, args=[bot])
 
     scheduler.start()
 

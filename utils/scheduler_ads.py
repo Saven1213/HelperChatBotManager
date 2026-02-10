@@ -1,3 +1,5 @@
+import os
+
 from aiogram import Bot
 from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -38,12 +40,21 @@ async def push_ad(bot: Bot):
         ]
     )
 
+
+    current_file_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_file_dir)
+    photos_dir = os.path.join(parent_dir, 'pictures')
+    photo_path = os.path.join(photos_dir, 'main_info.jpg')
+
+
+
     for group in groups:
         await bot.send_photo(
             chat_id=group.group_id,
-            photo='AgACAgIAAxkBAAOQaYJLVZCDQ3kGKE7KahN435njRgYAAvYMaxvPsRlIs87OpGTmozABAAMCAAN5AAM4BA',
+            photo=photo_path,
             caption=text,
             reply_markup=keyboard
         )
+
 
 

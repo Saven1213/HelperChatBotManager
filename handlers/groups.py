@@ -31,13 +31,13 @@ async def check_pay(message: Message, bot: Bot):
         stopwords = await get_stop_words()
 
         for stopword in stopwords:
+            if message.text or message.caption:
+                if stopword.word in message.text if message.text else message.caption:
+                    await bot.delete_message(chat_id, message.message_id)
 
-            if stopword.word in message.text:
-                await bot.delete_message(chat_id, message.message_id)
-
-                return
+                    return
         if message.text or message.caption:
-            if tg_id in tg_id_list and not message.text.startswith('/'):
+            if tg_id in tg_id_list and not message.text.startswith('/') if message.text else message.caption.startswith('/'):
 
                 return
 

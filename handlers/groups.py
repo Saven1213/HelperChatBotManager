@@ -36,15 +36,12 @@ async def check_pay(message: Message, bot: Bot):
                     await bot.delete_message(chat_id, message.message_id)
 
                     return
-        if message.text or message.caption:
-            if tg_id in tg_id_list and not message.text.startswith('/') if message.text else message.caption.startswith('/'):
 
+        if tg_id in tg_id_list:
+            if not message.text.startswith('/'):
+                await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
                 return
 
-            else:
-                if tg_id in tg_id_list:
-
-                    await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
 
 

@@ -1,7 +1,8 @@
 from datetime import datetime
-
+import os
 from aiogram import Router, F, Bot
 from aiogram.enums import ChatType
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 import asyncio
 from db.crud.groups import get_groups
@@ -9,6 +10,8 @@ from db.crud.message import add_message
 from db.crud.stopwords import get_stop_words
 from db.crud.user import get_user, add_user, reduce_ad
 from handlers.config import tg_id_list
+
+error_chat = os.getenv('ERROR_CHAT_ID')
 
 router = Router()
 
@@ -33,15 +36,15 @@ async def check_pay(message: Message, bot: Bot):
                 await bot.delete_message(chat_id, message.message_id)
 
                 return
+        if message.text or message.caption:
+            if tg_id in tg_id_list and not message.text.startswith('/'):
 
-        if tg_id in tg_id_list and not message.text.startswith('/'):
+                return
 
-            return
+            else:
+                if tg_id in tg_id_list:
 
-        else:
-            if tg_id in tg_id_list:
-
-                await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+                    await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
 
 
@@ -85,5 +88,10 @@ async def check_pay(message: Message, bot: Bot):
             await add_message(bot_msg_id.message_id, 'user_block', datetime.utcnow(), chat_id)
 
             await add_user(tg_id, message.from_user.username)
-    except:
-        pass
+    except TelegramBadRequest as e:
+
+        await bot.send_message(chat_id=error_chat, text=f'Ошибка при удалении сообщения: {e}')
+
+    except Exception as e:
+
+        await bot.send_message(chat_id=error_chat, text=f'Произошла ошибка: {e}')

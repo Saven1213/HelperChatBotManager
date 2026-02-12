@@ -1,6 +1,5 @@
 import asyncio
-import logging
-from datetime import datetime
+
 
 from aiogram.client.default import DefaultBotProperties
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
@@ -9,11 +8,10 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram import Bot, Dispatcher
 
 import os
-import sys
+
 from dotenv import load_dotenv
 
-from db.database import create_db
-from handlers.groups import check_pay
+
 from handlers.personal_bot import router as bot_router
 from handlers.groups import router as groups_router
 from utils.scheduler_ads import push_ad

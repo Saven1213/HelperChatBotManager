@@ -7,10 +7,19 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, InputFile,
 from db.crud.groups import get_groups
 from db.crud.message import get_messages
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
 
 
 
 async def push_ad(bot: Bot):
+
+
+    moscow_time = datetime.now(ZoneInfo("Europe/Moscow"))
+
+    if 0 <= moscow_time.hour < 6:
+        return
 
     groups = await get_groups()
 

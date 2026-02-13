@@ -14,7 +14,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
 
-    tg_id: Mapped[int] = mapped_column(BigInteger)
+    tg_id: Mapped[int] = mapped_column(BigInteger, unique=True)
 
     username: Mapped[str] = mapped_column(String, nullable=True)
 
